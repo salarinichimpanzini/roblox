@@ -1,1 +1,650 @@
 
+
+local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local UserInputService = game:GetService("UserInputService")
+local TweenService = game:GetService("TweenService")
+local Workspace = game:GetService("Workspace")
+
+-- Remote pipeline network discovery
+local RemoteEvents = ReplicatedStorage:FindFirstChild("RemoteEvents")
+local MoneyEvent = RemoteEvents and RemoteEvents:FindFirstChild("MoneyPickedUp") or ReplicatedStorage:FindFirstChild("MoneyPickedUp")
+local PlateEvent = RemoteEvents and RemoteEvents:FindFirstChild("PlateUpgrade") or ReplicatedStorage:FindFirstChild("PlateUpgrade")
+local TeleportEvent = RemoteEvents and RemoteEvents:FindFirstChild("TeleportToBiome") or ReplicatedStorage:FindFirstChild("TeleportToBiome")
+
+local player = Players.LocalPlayer
+local playerGui = player:WaitForChild("PlayerGui")
+
+-- Global Color Theme Engine Variables
+local CURRENT_THEME = Color3.fromRGB(0, 255, 65) -- Default Green Matrix
+local DIM_THEME = Color3.fromRGB(5, 15, 5)
+local ACCENT_THEME = Color3.fromRGB(0, 45, 10)
+
+----------------------------------------------------------------
+-- HIGH-DEFINITION CYBER CLI TERMINAL FRAMEWORK
+----------------------------------------------------------------
+local screenGui = Instance.new("ScreenGui")
+screenGui.Name = "QuantumTerminal"
+screenGui.ResetOnSpawn = false
+screenGui.Parent = playerGui
+
+local mainFrame = Instance.new("Frame")
+mainFrame.BackgroundColor3 = Color3.fromRGB(2, 6, 2)
+mainFrame.BorderSizePixel = 0
+mainFrame.Active = true
+mainFrame.ClipsDescendants = true
+mainFrame.Parent = screenGui
+
+local uiStroke = Instance.new("UIStroke", mainFrame)
+uiStroke.Color = DIM_THEME
+uiStroke.Thickness = 1
+
+local topBar = Instance.new("Frame")
+topBar.Size = UDim2.new(1, 0, 0, 25)
+topBar.BackgroundColor3 = DIM_THEME
+topBar.BorderSizePixel = 0
+topBar.Parent = mainFrame
+
+local topBarStroke = Instance.new("UIStroke", topBar)
+topBarStroke.Color = ACCENT_THEME
+topBarStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+
+local title = Instance.new("TextLabel")
+title.Size = UDim2.new(1, -95, 1, 0)
+title.Position = UDim2.new(0, 10, 0, 0)
+title.BackgroundTransparency = 1
+title.Text = "sys@quantum_node:~# ./Server_bypass.sh"
+title.TextColor3 = CURRENT_THEME
+title.TextSize = 11
+title.Font = Enum.Font.Code
+title.TextXAlignment = Enum.TextXAlignment.Left
+title.Parent = topBar
+
+-- [☠] Self-Destruct Kill Switch Button (ASCII Nuclear Command Component)
+local selfDestructBtn = Instance.new("TextButton")
+selfDestructBtn.Size = UDim2.new(0, 30, 1, 0)
+selfDestructBtn.Position = UDim2.new(1, -65, 0, 0)
+selfDestructBtn.BackgroundTransparency = 1
+selfDestructBtn.Text = "[☠]"
+selfDestructBtn.TextColor3 = Color3.fromRGB(220, 40, 40)
+selfDestructBtn.Font = Enum.Font.Code
+selfDestructBtn.TextSize = 11
+selfDestructBtn.Parent = topBar
+
+-- [#] Settings Sub-Terminal Button
+local settingsToggle = Instance.new("TextButton")
+settingsToggle.Size = UDim2.new(0, 30, 1, 0)
+settingsToggle.Position = UDim2.new(1, -35, 0, 0)
+settingsToggle.BackgroundTransparency = 1
+settingsToggle.Text = "[⚙️]"
+settingsToggle.TextColor3 = CURRENT_THEME
+settingsToggle.Font = Enum.Font.Code
+settingsToggle.TextSize = 11
+settingsToggle.Parent = topBar
+
+-- [↘] Drag Handle Element for Real-Time Window Resizing
+local resizeHandle = Instance.new("TextButton")
+resizeHandle.Size = UDim2.new(0, 15, 0, 15)
+resizeHandle.Position = UDim2.new(1, -15, 1, -15)
+resizeHandle.BackgroundTransparency = 0.5
+resizeHandle.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+resizeHandle.Text = "◢"
+resizeHandle.TextColor3 = CURRENT_THEME
+resizeHandle.Font = Enum.Font.Code
+resizeHandle.TextSize = 10
+resizeHandle.ZIndex = 12
+resizeHandle.Parent = mainFrame
+
+-- Main Canvas Container (Proportional Scale Layout Matrix)
+local contentCanvas = Instance.new("Frame")
+contentCanvas.Size = UDim2.new(1, 0, 1, -25)
+contentCanvas.Position = UDim2.new(0, 0, 0, 25)
+contentCanvas.BackgroundTransparency = 1
+contentCanvas.ClipsDescendants = true
+contentCanvas.Visible = false
+contentCanvas.Parent = mainFrame
+
+-- Settings Configuration Interface Overlay Block
+local settingsPanel = Instance.new("Frame")
+settingsPanel.Size = UDim2.new(1, 0, 1, -25)
+settingsPanel.Position = UDim2.new(0, 0, 1, 0)
+settingsPanel.BackgroundColor3 = Color3.fromRGB(3, 8, 3)
+settingsPanel.BorderSizePixel = 0
+settingsPanel.ZIndex = 8
+settingsPanel.Parent = mainFrame
+
+local settingsPanelStroke = Instance.new("UIStroke", settingsPanel)
+settingsPanelStroke.Color = ACCENT_THEME
+settingsPanelStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+
+-- Boot Sequence Overlay Output Terminal
+local bootConsole = Instance.new("TextLabel")
+bootConsole.Size = UDim2.new(1, -20, 1, -35)
+bootConsole.Position = UDim2.new(0, 10, 0, 30)
+bootConsole.BackgroundTransparency = 1
+bootConsole.TextColor3 = CURRENT_THEME
+bootConsole.TextSize = 11
+bootConsole.Font = Enum.Font.Code
+bootConsole.TextXAlignment = Enum.TextXAlignment.Left
+bootConsole.TextYAlignment = Enum.TextYAlignment.Top
+bootConsole.RichText = true
+bootConsole.Parent = mainFrame
+
+----------------------------------------------------------------
+-- PROPORTIONAL CLI CORE CONTROLS GENERATOR (DYNAMIC SCALE)
+----------------------------------------------------------------
+local strokeTracker = {}
+local textTracker = {}
+local backgroundTracker = {}
+local inputTextBoxes = {}
+local functionalButtons = {}
+
+local function createHDInput(fullName, pos, size)
+	local bg = Instance.new("Frame")
+	bg.Size = size
+	bg.Position = pos
+	bg.BackgroundColor3 = Color3.fromRGB(4, 10, 4)
+	bg.BorderSizePixel = 0
+	bg.Parent = contentCanvas
+	table.insert(backgroundTracker, bg)
+	
+	local stroke = Instance.new("UIStroke", bg)
+	stroke.Color = ACCENT_THEME
+	table.insert(strokeTracker, stroke)
+
+	local pfx = Instance.new("TextLabel")
+	pfx.Size = UDim2.new(1, -10, 0, 12)
+	pfx.Position = UDim2.new(0, 8, 0, -12)
+	pfx.BackgroundTransparency = 1
+	pfx.Text = string.lower(fullName)
+	pfx.TextColor3 = CURRENT_THEME
+	pfx.TextSize = 9
+	pfx.Font = Enum.Font.Code
+	pfx.TextXAlignment = Enum.TextXAlignment.Left
+	pfx.Parent = bg
+	table.insert(textTracker, pfx)
+
+	local tb = Instance.new("TextBox")
+	tb.Size = UDim2.new(1, -20, 1, 0)
+	tb.Position = UDim2.new(0, 12, 0, 0)
+	tb.BackgroundTransparency = 1
+	tb.TextColor3 = CURRENT_THEME
+	tb.PlaceholderText = "SET_" .. fullName .. "..."
+	tb.PlaceholderColor3 = ACCENT_THEME
+	tb.Text = ""
+	tb.Font = Enum.Font.Code
+	tb.TextSize = 11
+	tb.TextXAlignment = Enum.TextXAlignment.Left
+	tb.ClearTextOnFocus = false
+	tb.Parent = bg
+	table.insert(inputTextBoxes, tb)
+	
+	tb.Focused:Connect(function() 
+		TweenService:Create(stroke, TweenInfo.new(0.15), {Color = CURRENT_THEME, Thickness = 1.5}):Play()
+	end)
+	tb.FocusLost:Connect(function() 
+		TweenService:Create(stroke, TweenInfo.new(0.2), {Color = ACCENT_THEME, Thickness = 1}):Play()
+	end)
+	
+	return tb
+end
+
+local function createHDButton(command, pos, size)
+	local btn = Instance.new("TextButton")
+	btn.Size = size
+	btn.Position = pos
+	btn.BackgroundColor3 = Color3.fromRGB(6, 14, 6)
+	btn.TextColor3 = CURRENT_THEME
+	btn.Text = ">> EXECUTE_" .. command
+	btn.Font = Enum.Font.Code
+	btn.TextSize = 11
+	btn.Parent = contentCanvas
+	table.insert(backgroundTracker, btn)
+	table.insert(functionalButtons, btn)
+	
+	local stroke = Instance.new("UIStroke", btn)
+	stroke.Color = ACCENT_THEME
+	table.insert(strokeTracker, stroke)
+	
+	btn.MouseEnter:Connect(function()
+		TweenService:Create(btn, TweenInfo.new(0.1), {BackgroundColor3 = ACCENT_THEME, TextColor3 = CURRENT_THEME}):Play()
+		TweenService:Create(stroke, TweenInfo.new(0.1), {Color = CURRENT_THEME}):Play()
+	end)
+	btn.MouseLeave:Connect(function()
+		TweenService:Create(btn, TweenInfo.new(0.15), {BackgroundColor3 = Color3.fromRGB(6, 14, 6), TextColor3 = CURRENT_THEME}):Play()
+		TweenService:Create(stroke, TweenInfo.new(0.15), {Color = ACCENT_THEME}):Play()
+	end)
+	
+	return btn
+end
+
+local inputMoney = createHDInput("MONEY", UDim2.new(0.03, 0, 0.1, 0), UDim2.new(0.44, 0, 0.15, 0))
+local inputMulti = createHDInput("MULTIPLIER_SPEED", UDim2.new(0.03, 0, 0.35, 0), UDim2.new(0.44, 0, 0.15, 0))
+local inputDelay = createHDInput("DELAY_INTERVAL", UDim2.new(0.03, 0, 0.6, 0), UDim2.new(0.44, 0, 0.15, 0))
+
+inputMulti.Text = "1000"
+inputDelay.Text = "3"
+
+local btnMoney = createHDButton("MONEY_ADD", UDim2.new(0.53, 0, 0.1, 0), UDim2.new(0.44, 0, 0.15, 0))
+local btnPlate = createHDButton("UPGRADE_SPEED", UDim2.new(0.53, 0, 0.35, 0), UDim2.new(0.44, 0, 0.15, 0))
+local btnTP    = createHDButton("FARM_WINS", UDim2.new(0.53, 0, 0.6, 0), UDim2.new(0.44, 0, 0.15, 0))
+
+local tpWarningText = Instance.new("TextLabel")
+tpWarningText.Size = UDim2.new(0.94, 0, 0.05, 10)
+tpWarningText.Position = UDim2.new(0.03, 0, 0.82, 0)
+tpWarningText.BackgroundTransparency = 1
+tpWarningText.Text = "SYSTEM_NOTICE: FARM_WINS EXCLUSIVELY COMPATIBLE WITH FINAL STAGE WORLD"
+tpWarningText.TextColor3 = Color3.fromRGB(180, 40, 40)
+tpWarningText.Font = Enum.Font.Code
+tpWarningText.TextSize = 9
+tpWarningText.TextScaled = true
+tpWarningText.TextXAlignment = Enum.TextXAlignment.Left
+tpWarningText.Parent = contentCanvas
+
+local loopWarningText = Instance.new("TextLabel")
+loopWarningText.Size = UDim2.new(0.94, 0, 0.05, 10)
+loopWarningText.Position = UDim2.new(0.03, 0, 0.9, 0)
+loopWarningText.BackgroundTransparency = 1
+loopWarningText.Text = "CRITICAL_CORE: UPGRADE SPEED IS IRREVERSIBLE AND UNSTOPPABLE ONCE ENGAGED"
+loopWarningText.TextColor3 = Color3.fromRGB(200, 100, 0)
+loopWarningText.Font = Enum.Font.Code
+loopWarningText.TextSize = 9
+loopWarningText.TextScaled = true
+loopWarningText.TextXAlignment = Enum.TextXAlignment.Left
+loopWarningText.Parent = contentCanvas
+
+----------------------------------------------------------------
+-- GLOBAL SYSTEM THEME OVERRIDE MATRIX ENGINE
+----------------------------------------------------------------
+local settingsTitle = Instance.new("TextLabel")
+settingsTitle.Size = UDim2.new(1, -20, 0, 20)
+settingsTitle.Position = UDim2.new(0, 15, 0, 10)
+settingsTitle.BackgroundTransparency = 1
+settingsTitle.Text = ">> HARDWARE CORE THEME OVERRIDE SYSTEM"
+settingsTitle.TextColor3 = CURRENT_THEME
+settingsTitle.Font = Enum.Font.Code
+settingsTitle.TextSize = 11
+settingsTitle.TextXAlignment = Enum.TextXAlignment.Left
+settingsTitle.ZIndex = 9
+settingsTitle.Parent = settingsPanel
+
+local function createThemeBtn(name, color, dim, accent, pos)
+	local tBtn = Instance.new("TextButton")
+	tBtn.Size = UDim2.new(0.28, 0, 0.15, 15)
+	tBtn.Position = pos
+	tBtn.BackgroundColor3 = Color3.fromRGB(10, 15, 10)
+	tBtn.TextColor3 = color
+	tBtn.Text = "[ MATCH_" .. name .. " ]"
+	tBtn.Font = Enum.Font.Code
+	tBtn.TextSize = 10
+	tBtn.ZIndex = 9
+	tBtn.Parent = settingsPanel
+	
+	local tStroke = Instance.new("UIStroke", tBtn)
+	tStroke.Color = accent
+	
+	tBtn.MouseButton1Click:Connect(function()
+		CURRENT_THEME = color
+		DIM_THEME = dim
+		ACCENT_THEME = accent
+		
+		uiStroke.Color = CURRENT_THEME
+		mainFrame.BackgroundColor3 = Color3.fromRGB(dim.R*255*0.4, dim.G*255*0.4, dim.B*255*0.4)
+		settingsPanel.BackgroundColor3 = Color3.fromRGB(dim.R*255*0.6, dim.G*255*0.6, dim.B*255*0.6)
+		topBar.BackgroundColor3 = dim
+		topBarStroke.Color = accent
+		settingsPanelStroke.Color = accent
+		
+		title.TextColor3 = CURRENT_THEME
+		settingsToggle.TextColor3 = CURRENT_THEME
+		settingsTitle.TextColor3 = CURRENT_THEME
+		resizeHandle.TextColor3 = CURRENT_THEME
+		
+		for _, s in ipairs(strokeTracker) do s.Color = accent end
+		for _, bg in ipairs(backgroundTracker) do
+			bg.BackgroundColor3 = Color3.fromRGB(dim.R*255*0.8, dim.G*255*0.8, dim.B*255*0.8)
+		end
+		for _, txt in ipairs(textTracker) do txt.TextColor3 = CURRENT_THEME end
+		for _, tb in ipairs(inputTextBoxes) do
+			tb.TextColor3 = CURRENT_THEME
+			tb.PlaceholderColor3 = accent
+		end
+		for _, btn in ipairs(functionalButtons) do
+			btn.TextColor3 = CURRENT_THEME
+		end
+	end)
+end
+
+createThemeBtn("GREEN", Color3.fromRGB(0, 255, 65), Color3.fromRGB(5, 15, 5), Color3.fromRGB(0, 45, 10), UDim2.new(0.03, 0, 0.25, 0))
+createThemeBtn("AMBER", Color3.fromRGB(255, 170, 0), Color3.fromRGB(20, 12, 2), Color3.fromRGB(60, 35, 0), UDim2.new(0.36, 0, 0.25, 0))
+createThemeBtn("CYAN", Color3.fromRGB(0, 240, 255), Color3.fromRGB(2, 15, 20), Color3.fromRGB(0, 50, 65), UDim2.new(0.69, 0, 0.25, 0))
+
+local settingsOpen = false
+settingsToggle.MouseButton1Click:Connect(function()
+	settingsOpen = not settingsOpen
+	local targetPos = settingsOpen and UDim2.new(0, 0, 0, 25) or UDim2.new(0, 0, 1, 0)
+	TweenService:Create(settingsPanel, TweenInfo.new(0.3, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), {Position = targetPos}):Play()
+	settingsToggle.Text = settingsOpen and "[X]" or "[⚙️]"
+end)
+
+----------------------------------------------------------------
+-- INTERACTIVE LIVE WINDOW RESIZER ENGINE
+----------------------------------------------------------------
+local resizing = false
+local resizeStartPos
+local frameStartSize
+
+resizeHandle.InputBegan:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+		resizing = true
+		resizeStartPos = input.Position
+		frameStartSize = mainFrame.Size
+		input.Changed:Connect(function()
+			if input.UserInputState == Enum.UserInputState.End then resizing = false end
+		end)
+	end
+end)
+
+UserInputService.InputChanged:Connect(function(input)
+	if resizing and input.UserInputType == Enum.UserInputType.MouseMovement then
+		local delta = input.Position - resizeStartPos
+		local targetWidth = math.max(480, frameStartSize.X.Offset + delta.X)
+		local targetHeight = math.max(220, frameStartSize.Y.Offset + delta.Y)
+		mainFrame.Size = UDim2.new(0, targetWidth, 0, targetHeight)
+	end
+end)
+
+----------------------------------------------------------------
+-- HIGH-VELOCITY DIGITAL PIXEL PARTICLES DESTRUCTION ENGINE
+----------------------------------------------------------------
+local isDestroying = false
+
+selfDestructBtn.MouseButton1Click:Connect(function()
+	if isDestroying then return end
+	isDestroying = true
+	
+	-- Apagar hilos activos de recolección en paralelo
+	loopPlateActive = false
+	loopTPActive = false
+	
+	-- Efecto glitch de alerta crítica previa a la detonación
+	contentCanvas.Visible = false
+	settingsPanel.Visible = false
+	bootConsole.Visible = true
+	bootConsole.TextColor3 = Color3.fromRGB(255, 30, 30)
+	
+	for i = 1, 6 do
+		bootConsole.Text = ">> CRITICAL_OVERHEAT: TERMINAL CORRUPTION DETECTED...\n>> SYSTEM PURGE ENGAGED IN " .. tostring(7 - i)
+		mainFrame.BackgroundColor3 = Color3.fromRGB(50, 0, 0)
+		uiStroke.Color = Color3.fromRGB(255, 0, 0)
+		task.wait(0.08)
+		mainFrame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+		uiStroke.Color = Color3.fromRGB(50, 0, 0)
+		task.wait(0.08)
+	end
+	
+	-- Captura de métricas geométricas del cuadro para el centro de la explosión
+	local startAbsPos = mainFrame.AbsolutePosition
+	local startAbsSize = mainFrame.AbsoluteSize
+	local centerX = startAbsPos.X + (startAbsSize.X / 2)
+	local centerY = startAbsPos.Y + (startAbsSize.Y / 2)
+	
+	mainFrame.Visible = false
+	
+	-- Contenedor temporal de partículas volátiles en pantalla
+	local particleContainer = Instance.new("ScreenGui")
+	particleContainer.Name = "AshesMatrix"
+	particleContainer.Parent = playerGui
+	
+	local pixelGlyphs = {"█", "▓", "▒", "░", "■", "▪"}
+	local particleTable = {}
+	local rng = Random.new()
+	
+	-- Generar oleada masiva de fragmentos vectoriales pixelados
+	for i = 1, 120 do
+		local particle = Instance.new("TextLabel")
+		particle.BackgroundTransparency = 1
+		particle.Font = Enum.Font.Code
+		particle.TextSize = rng:NextInteger(10, 24)
+		particle.Text = pixelGlyphs[rng:NextInteger(1, #pixelGlyphs)]
+		particle.TextColor3 = CURRENT_THEME:Lerp(Color3.fromRGB(255, 255, 255), rng:NextNumber(0, 0.4))
+		
+		-- Posicionamiento inicial en el baricentro de la ventana borrada
+		particle.Position = UDim2.new(0, centerX + rng:NextInteger(-20, 20), 0, centerY + rng:NextInteger(-20, 20))
+		particle.Parent = particleContainer
+		
+		-- Ecuación física de proyección radial (Ángulo + Fuerza de Empuje)
+		local angle = rng:NextNumber(0, math.pi * 2)
+		local speed = rng:NextNumber(150, 650)
+		local velocityX = math.cos(angle) * speed
+		local velocityY = math.sin(angle) * speed
+		
+		table.insert(particleTable, {
+			Instance = particle,
+			VelX = velocityX,
+			VelY = velocityY,
+			Alpha = 1
+		})
+	end
+	
+	-- Bucle de renderizado físico de la explosión (Simulación cinemática independiente)
+	local duration = 1.2
+	local elapsed = 0
+	while elapsed < duration do
+		local dt = task.wait()
+		elapsed = elapsed + dt
+		local progress = elapsed / duration
+		
+		for _, data in ipairs(particleTable) do
+			local p = data.Instance
+			-- Actualizar posición mediante diferencial de desplazamiento lineal
+			local currentPos = p.Position
+			p.Position = UDim2.new(
+				0, currentPos.X.Offset + (data.VelX * dt), 
+				0, currentPos.Y.Offset + (data.VelY * dt) + (180 * dt) -- Añade gravedad artificial leve descendente
+			)
+			-- Desvanecimiento alfa de los bloques de datos corruptos
+			p.TextTransparency = progress
+		end
+	end
+	
+	-- Purga total: Borrado absoluto del ecosistema GUI de memoria del cliente
+	particleContainer:Destroy()
+	screenGui:Destroy()
+	script:Destroy()
+end)
+
+----------------------------------------------------------------
+-- CINEMATIC MATRIX GLITCH FLICKER BOOT SEQUENCE
+----------------------------------------------------------------
+local initSize = UDim2.new(0, 520, 0, 240)
+local initPos = UDim2.new(0.5, -260, 0.5, -120)
+
+mainFrame.Size = UDim2.new(0, 10, 0, 1)
+mainFrame.Position = UDim2.new(0.5, -5, 0.5, 0)
+
+local function typeTerminalLine(text)
+	local prefixText = bootConsole.Text .. "\n"
+	for i = 1, #text do
+		bootConsole.Text = prefixText .. string.sub(text, 1, i) .. "█"
+		task.wait(0.005)
+	end
+	bootConsole.Text = prefixText .. text
+end
+
+task.spawn(function()
+	task.wait(0.1)
+	TweenService:Create(mainFrame, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Size = UDim2.new(0, 520, 0, 2), Position = UDim2.new(0.5, -260, 0.5, 0)}):Play()
+	task.wait(0.2)
+	TweenService:Create(mainFrame, TweenInfo.new(0.25, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), {Size = initSize, Position = initPos}):Play()
+	task.wait(0.3)
+	
+	typeTerminalLine("Connecting local proxy gateway to remote servers...")
+	typeTerminalLine("Injecting execution module frames inside local client tree...")
+	task.wait(0.05)
+	typeTerminalLine("Mapping environment pointers: MoneyPickedUp & PlateUpgrade speed...")
+	
+	for i = 1, 8 do
+		bootConsole.TextTransparency = 0.8
+		uiStroke.Color = Color3.fromRGB(0, 20, 0)
+		task.wait(0.02)
+		bootConsole.TextTransparency = 0
+		uiStroke.Color = CURRENT_THEME
+		task.wait(0.01)
+	end
+	
+	typeTerminalLine(">> LINK STABLE. TERMINAL PROTOCOLS ACTIVE.")
+	task.wait(0.4)
+	
+	TweenService:Create(bootConsole, TweenInfo.new(0.1), {TextTransparency = 1}):Play()
+	task.wait(0.1)
+	bootConsole.Visible = false
+	contentCanvas.Visible = true
+	
+	task.spawn(function()
+		while true do
+			if isDestroying then break end
+			TweenService:Create(loopWarningText, TweenInfo.new(0.7, Enum.EasingStyle.Sine), {TextTransparency = 0.4}):Play()
+			TweenService:Create(tpWarningText, TweenInfo.new(0.7, Enum.EasingStyle.Sine), {TextTransparency = 0.4}):Play()
+			task.wait(0.7)
+			if isDestroying then break end
+			TweenService:Create(loopWarningText, TweenInfo.new(0.7, Enum.EasingStyle.Sine), {TextTransparency = 0}):Play()
+			TweenService:Create(tpWarningText, TweenInfo.new(0.7, Enum.EasingStyle.Sine), {TextTransparency = 0}):Play()
+			task.wait(0.7)
+		end
+	end)
+end)
+
+----------------------------------------------------------------
+-- STABLE TERMINAL DRAGGING MECHANICS
+----------------------------------------------------------------
+local dragging, dragInput, dragStart, startPos
+
+topBar.InputBegan:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+		dragging = true
+		dragStart = input.Position
+		startPos = mainFrame.Position
+		input.Changed:Connect(function()
+			if input.UserInputState == Enum.UserInputState.End then dragging = false end
+		end)
+	end
+end)
+
+mainFrame.InputChanged:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+		dragInput = input
+	end
+end)
+
+UserInputService.InputChanged:Connect(function(input)
+	if input == dragInput and dragging then
+		local delta = input.Position - dragStart
+		mainFrame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+	end
+end)
+
+----------------------------------------------------------------
+-- DATA TRANSLATION BACKEND PIPELINES
+----------------------------------------------------------------
+
+btnMoney.MouseButton1Click:Connect(function()
+	local amount = tonumber(inputMoney.Text)
+	if amount and MoneyEvent then
+		MoneyEvent:FireServer(amount)
+	end
+end)
+
+local loopPlateActive = false
+
+btnPlate.MouseButton1Click:Connect(function()
+	if loopPlateActive then return end 
+	if not PlateEvent then return end
+	
+	loopPlateActive = true
+	local factor = tonumber(inputMulti.Text) or 1000
+	
+	btnPlate.Text = ">> ERROR: CORE_SPEED_LOCKED"
+	btnPlate.BackgroundColor3 = Color3.fromRGB(35, 5, 5)
+	btnPlate.TextColor3 = Color3.fromRGB(245, 45, 45)
+	btnPlate.Active = false 
+	
+	task.spawn(function()
+		while loopPlateActive do
+			for i = 1, factor do
+				PlateEvent:FireServer()
+			end
+			task.wait()
+		end
+	end)
+end)
+
+local loopTPActive = false
+
+local function executeTeleport(targetInstance)
+	if not loopTPActive then return false end
+	local character = player.Character
+	local hrp = character and character:FindFirstChild("HumanoidRootPart")
+	if hrp and targetInstance then
+		hrp.CFrame = targetInstance:GetPivot() * CFrame.new(0, 3, 0)
+		return true
+	end
+	return false
+end
+
+btnTP.MouseButton1Click:Connect(function()
+	loopTPActive = not loopTPActive
+	local wallDelay = tonumber(inputDelay.Text) or 3
+	
+	if loopTPActive then
+		btnTP.Text = ">> MONITORING_DATA_TARGETS..."
+		btnTP.TextColor3 = Color3.fromRGB(255, 255, 255)
+		
+		task.spawn(function()
+			while loopTPActive do
+				local character = player.Character
+				local humanoid = character and character:FindFirstChildOfClass("Humanoid")
+				if humanoid and humanoid.FloorMaterial ~= Enum.Material.Air then
+					humanoid.Jump = true
+				end
+				task.wait(0.05)
+			end
+		end)
+		
+		task.spawn(function()
+			if loopTPActive and TeleportEvent then
+				TeleportEvent:FireServer("AstralWorld")
+				task.wait(0.8)
+			end
+			
+			while loopTPActive do
+				local alienCapsule = Workspace:FindFirstChild("AlienCapsule")
+				executeTeleport(alienCapsule)
+				task.wait(0.3)
+				
+				local mapFolder = Workspace:FindFirstChild("Map")
+				
+				if not loopTPActive then break end
+				local world6Wall = mapFolder and mapFolder:FindFirstChild("World6Wall")
+				executeTeleport(world6Wall)
+				
+				local counter = math.floor(wallDelay * 10)
+				for i = 1, counter do
+					if not loopTPActive then break end
+					task.wait(0.1)
+				end
+				if not loopTPActive then break end
+				
+				local world1Folder = mapFolder and mapFolder:FindFirstChild("World1")
+				local part5 = world1Folder and world1Folder:FindFirstChild("Part5")
+				executeTeleport(part5)
+				
+				task.wait(1)
+			end
+		end)
+	else
+		loopTPActive = false
+		btnTP.Text = ">> EXECUTE_INITIALIZE_TP_SEQ"
+		btnTP.TextColor3 = CURRENT_THEME
+	end
+end)
